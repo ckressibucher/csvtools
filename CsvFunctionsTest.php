@@ -1,8 +1,8 @@
 <?php
 
-namespace CSV\Test;
+namespace Ckr\CSV\Test;
 
-use CSV;
+use Ckr\CSV;
 use PHPUnit_Framework_TestCase;
 use RuntimeException;
 

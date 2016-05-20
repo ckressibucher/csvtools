@@ -1,6 +1,6 @@
 <?php
 
-namespace CSV;
+namespace Ckr\CSV;
 
 use Generator;
 use Traversable;
