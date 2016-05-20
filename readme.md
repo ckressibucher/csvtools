@@ -1,5 +1,8 @@
 # Process CSV datasets efficiently
 
+[![Build Status](https://travis-ci.org/ckressibucher/csvtools.svg?branch=master)](https://travis-ci.org/ckressibucher/csvtools)
+[![Coverage Status](https://coveralls.io/repos/github/ckressibucher/csvtools/badge.svg?branch=master)](https://coveralls.io/github/ckressibucher/csvtools?branch=master)
+
 This is just a collection of functions to process
 CSV (and other) data structures. The functions are
 designed in such a way that they can be combined
