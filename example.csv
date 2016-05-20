@@ -1,0 +1,6 @@
+id,product,inventory,price,is_healthy
+1,"green apples",11,2.00,10
+2,"red apples",8,1.80,9
+3,wine,3,8.00,5
+3,bananas,0,1.90,7
+

@@ -181,6 +181,21 @@ function buildSelect(array $fields): \Closure
 }
 
 /**
+ * Builds a mapper processing stage
+ *
+ * TODO factor out builder logic from all builders...
+ *
+ * @param callable $mapper
+ * @return \Closure
+ */
+function buildMap(callable $mapper): \Closure
+{
+    return function (Traversable $data) use ($mapper) {
+        return doMap($data, $mapper);
+    };
+}
+
+/**
  * Lets you combine different "stages" (functions) to
  * a pipeline of tasks which are executed sequentially
  * to process a given Traversable input set.
@@ -248,7 +263,7 @@ function writeToFile(
         throw new \RuntimeException('Can not write to ' . $path);
     }
     $fh = fopen($path, 'wb');
-    writeToResource($fh, $data, $delimiter, $enclosure);
+    writeToResource($data, $fh, $delimiter, $enclosure);
     fclose($fh);
 }
 
@@ -261,8 +276,8 @@ function writeToFile(
  * @param string $enclosure
  */
 function writeToResource(
-    $outputStream,
     Traversable $data,
+    $outputStream,
     string $delimiter = ',',
     string $enclosure = '"'
 ) {

@@ -124,6 +124,24 @@ class CsvFunctionsTest extends PHPUnit_Framework_TestCase
      */
     public function its_buildSelect_creates_a_select_closure_yielding_a_generator()
     {
+        $input = new \ArrayObject([2, 3]);
+        $expected = [4, 6]; // we double each value
+
+        $callback = CSV\buildMap(function ($val) {
+            return 2 * $val;
+        });
+        $this->assertTrue(is_callable($callback));
+
+        $out = $callback($input);
+        $this->assertInstanceOf(\Generator::class, $out);
+        $this->assertEquals($expected, iterator_to_array($out));
+    }
+
+    /**
+     * @test
+     */
+    public function its_buildMap_creates_a_mapper_closure_yielding_a_generator()
+    {
         $input = [['a' => 1, 'b' => 2]];
         $fields = ['a'];
         $expected = [['a' => 1]];
@@ -251,7 +269,7 @@ class CsvFunctionsTest extends PHPUnit_Framework_TestCase
         ];
         $expectedOutput = ['a,b,c', '1,2,3'];
         $outStream = fopen('php://memory', 'w+');
-        CSV\writeToResource($outStream, $this->toIterable($input));
+        CSV\writeToResource($this->toIterable($input), $outStream);
 
         rewind($outStream);
         $line1 = fgets($outStream);
