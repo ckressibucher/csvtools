@@ -1,0 +1,25 @@
+{
+    "name": "ckr/csvtools",
+    "description": "some functions to process csv data in a lazy way",
+    "keywords": [
+        "csv",
+        "lazy",
+        "functional"
+    ],
+    "require-dev": {
+        "phpunit/phpunit": "^5.3"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Claudio Kressibucher",
+            "email": "ckressibucher@graphicworks.ch"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "files": [
+            "csv_functions.php"
+        ]
+    }
+}
