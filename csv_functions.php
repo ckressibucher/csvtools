@@ -39,19 +39,19 @@ function readFromFile(
 /**
  * Reads CSV rows line by line from the given resource
  *
- * @param resource $fh      Resource to read from (Will not be closed by this function!)
+ * @param resource $inputStream      Resource to read from (Will not be closed by this function!)
  * @param string $delimiter CSV Delimiter used for parsing
  * @param string $enclosure CSV Enclosure used for parsing
  * @return Generator        Generator or arrays (one arr per line)
  */
 function readFromResource(
-    resource $fh,
+    $inputStream,
     string $delimiter = ',',
     string $enclosure = '"'
 ): Generator {
-    while (false !== ($line = fgetcsv($fh, null, $delimiter, $enclosure))) {
+    while (false !== ($line = fgetcsv($inputStream, null, $delimiter, $enclosure))) {
         if (null === $line) {
-            throw new \RuntimeException('probably invalid file handle');
+            throw new \RuntimeException('probably invalid resource');
         }
         if (1 === count($line) && null === $line[0]) {
             continue;
@@ -233,6 +233,7 @@ function writeToFile(
     string $enclosure = '"',
     $overwrite = true
 ) {
+
     if (file_exists($path)) {
         $ok = false;
         if ($overwrite) {
@@ -247,13 +248,30 @@ function writeToFile(
         throw new \RuntimeException('Can not write to ' . $path);
     }
     $fh = fopen($path, 'wb');
+    writeToResource($fh, $data, $delimiter, $enclosure);
+    fclose($fh);
+}
+
+/**
+ * Writes the data to a resource / stream
+ *
+ * @param resource $outputStream
+ * @param Traversable $data
+ * @param string $delimiter
+ * @param string $enclosure
+ */
+function writeToResource(
+    $outputStream,
+    Traversable $data,
+    string $delimiter = ',',
+    string $enclosure = '"'
+) {
     foreach ($data as $row) {
-        $ok = fputcsv($fh, $row, $delimiter, $enclosure);
+        $ok = fputcsv($outputStream, $row, $delimiter, $enclosure);
         if (false === $ok) {
-            throw new \RuntimeException('error when writing file ' . $path);
+            throw new \RuntimeException('error when writing resource');
         }
     }
-    fclose($fh);
 }
 
 /**

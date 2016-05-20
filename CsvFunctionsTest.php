@@ -3,9 +3,8 @@
 namespace CSV\Test;
 
 use CSV;
-
-use RuntimeException;
 use PHPUnit_Framework_TestCase;
+use RuntimeException;
 
 class CsvFunctionsTest extends PHPUnit_Framework_TestCase
 {
@@ -83,7 +82,7 @@ class CsvFunctionsTest extends PHPUnit_Framework_TestCase
         ];
         $expected = [
             'cba',
-            'yyy'
+            'yyy',
         ];
         $out = CSV\doMap($this->toIterable($input), 'strrev');
         $this->assertEquals($expected, iterator_to_array($out));
@@ -144,14 +143,14 @@ class CsvFunctionsTest extends PHPUnit_Framework_TestCase
     {
         $input = [
             ['a' => 11, 'b' => 22],
-            []
+            [],
         ];
         $expected = [ // filter and convert to string
-            ['a' => '11', 'b' => '22']
+            ['a' => '11', 'b' => '22'],
         ];
         $filter = function (\Traversable $data) {
             foreach ($data as $row) {
-                if (! empty($row)) {
+                if (!empty($row)) {
                     yield $row;
                 }
             }
@@ -221,6 +220,46 @@ class CsvFunctionsTest extends PHPUnit_Framework_TestCase
         CSV\doPrint($input);
         $output = ob_get_clean();
         $this->assertContains('some string', $output);
+    }
+
+    /**
+     * @test
+     */
+    public function its_readFromResource_returns_csv_row_generator()
+    {
+        $input = 'a,b,c' . PHP_EOL . '1,2,3';
+        $inStream = fopen('php://memory', 'w+');
+        fwrite($inStream, $input);
+        rewind($inStream);
+
+        $out = CSV\readFromResource($inStream);
+        $this->assertInstanceOf(\Generator::class, $out);
+        $outputArr = iterator_to_array($out);
+        $this->assertEquals([['a', 'b', 'c'], ['1', '2', '3']], $outputArr);
+
+        fclose($inStream);
+    }
+
+    /**
+     * @test
+     */
+    public function its_writeToResource_writes_csv_rows()
+    {
+        $input = [
+            ['a', 'b', 'c'],
+            [1, 2, 3],
+        ];
+        $expectedOutput = ['a,b,c', '1,2,3'];
+        $outStream = fopen('php://memory', 'w+');
+        CSV\writeToResource($outStream, $this->toIterable($input));
+
+        rewind($outStream);
+        $line1 = fgets($outStream);
+        $line2 = fgets($outStream);
+        $this->assertSame($expectedOutput[0], trim($line1));
+        $this->assertSame($expectedOutput[1], trim($line2));
+
+        fclose($outStream);
     }
 
     private function toIterable(array $arr)
