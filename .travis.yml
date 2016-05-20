@@ -1,0 +1,15 @@
+language: php
+php:
+  - "7.0"
+
+install:
+  - "wget https://github.com/satooshi/php-coveralls/releases/download/v1.0.1/coveralls.phar"
+  - md5sum coveralls.phar | grep 840491b5f2b06312ac8b6f000ab08e2b
+  - composer install --no-interaction
+
+script:
+  - ./vendor/bin/phpunit --coverage-clover=coverage-clover.xml
+
+after_success:
+  - mkdir -p build/logs
+  - travis_retry php ./coveralls.phar --coverage_clover=coverage-clover.xml
